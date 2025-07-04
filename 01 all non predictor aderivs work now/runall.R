@@ -1,0 +1,25 @@
+#
+# make derivative codes for fitdistpu, one model at a time
+#
+rm(list=ls())
+setwd(paste(Sys.getenv('HOME'),'/03 pn/05 statistics/fitdistpu/makederivatives/',sep=""))
+library(Deriv)
+#
+source("./10_exp_makederivs.R")
+source("./11_pareto_k1_makederivs.R")
+source("./20_halfnorm_makederivs.R")
+source("./30_norm_makederivs.R")
+source("./32_gnorm_makederivs.R")
+source("./35_lnorm_makederivs.R")
+source("./40_logis_makederivs.R")
+source("./41_lst_k3_makederivs.R")
+source("./42_cauchy_makederivs.R")
+source("./50_gumbel_makederivs.R")
+source("./51_frechet_k1_makederivs.R")
+source("./52_weibull_makederivs.R")
+source("./53_gev_k3_makederivs.R")
+source("./100_gamma_makederivs.R")
+source("./101_invgamma_makederivs.R")
+source("./102_invgauss_makederivs.R")
+source("./110_gev_makederivs.R")
+source("./120_gpd_k1_makederivs.R")

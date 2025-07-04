@@ -1,0 +1,5 @@
+1) extend f and p derivs to predictor models and test
+-then that's pretty much it for exact derivatives
+-since I can't really do the other p's, or mu
+
+

@@ -1,0 +1,4 @@
+1) test the f1f and f2f routines I've made so far (non-predictor models)
+2) add the p1f and p2f routines, and test them
+3) extend everything to predictor models
+
