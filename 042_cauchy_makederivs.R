@@ -16,7 +16,7 @@ compare("l",dcauchy(1,2,3,log=TRUE),logf(1,2,3))
 cauchy_logfdd=Deriv(logf,c("v1","v2"),nderiv=2)
 cauchy_logfddd=Deriv(logf,c("v1","v2"),nderiv=3)
 #
-sink("42c_cauchy_derivs.R")
+sink("042c_cauchy_derivs.R")
 #
 cat("######################################################################\n")
 cat("#' First derivative of the density\n")

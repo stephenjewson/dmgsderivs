@@ -4,23 +4,27 @@
 setwd(paste(Sys.getenv('HOME'),'/97 MyRpackages/fitdistcp/R',sep=""))
 library(Deriv)
 library(extraDistr)
+library(actuar)
 #
-f=function(x,v1,v2,v3){(1/v2)*((1+v3*((x-v1)/v2))^(-1/v3-1))*exp(-((1+v3*(x-v1)/v2)^(-1/v3)))}
-compare("d",extraDistr::dgev(1,2,3,0.1),f(1,2,3,0.1))
-gev_k3_fd=Deriv(f,c("v1","v2"),nderiv=1)
-gev_k3_fdd=Deriv(f,c("v1","v2"),nderiv=2)
+# v1=shape (a)
+# v2=scale (b)
+# note that the actuar version of the pareto is different
+f=function(x,v1,v2){v1*(v2^v1)/((x)^(v1+1))}
+compare("d",extraDistr::dpareto(4,3,2),f(4,3,2))
+pareto_k2_fd=Deriv(f,"v1",nderiv=1)
+pareto_k2_fdd=Deriv(f,"v1",nderiv=2)
 #
-p=function(x,v1,v2,v3){exp(-((1+v3*(x-v1)/v2)^(-1/v3)))}
-compare("p",extraDistr::pgev(1,2,3,0.1),p(1,2,3,0.1))
-gev_k3_pd=Deriv(p,c("v1","v2"),nderiv=1)
-gev_k3_pdd=Deriv(p,c("v1","v2"),nderiv=2)
+p=function(x,v1,v2){1-(v2/x)^v1}
+compare("p",extraDistr::ppareto(4,3,2),p(4,3,2))
+pareto_k2_pd=Deriv(p,"v1",nderiv=1)
+pareto_k2_pdd=Deriv(p,"v1",nderiv=2)
 #
-logf=function(x,v1,v2,v3){-log(v2)-(1+1/v3)*log(1+v3*(x-v1)/v2)-(1+v3*(x-v1)/v2)^(-1/v3)}
-compare("l",extraDistr::dgev(1,2,3,0.1,log=TRUE),logf(1,2,3,0.1))
-gev_k3_logfdd=Deriv(logf,c("v1","v2"),nderiv=2)
-gev_k3_logfddd=Deriv(logf,c("v1","v2"),nderiv=3)
+logf=function(x,v1,v2){log(v1)+v1*log(v2)-(v1+1)*log(x)}
+compare("l",extraDistr::dpareto(4,3,2,log=TRUE),logf(4,3,2))
+pareto_k2_logfdd=Deriv(logf,"v1",nderiv=2)
+pareto_k2_logfddd=Deriv(logf,"v1",nderiv=3)
 #
-sink("53c_gev_k3_derivs.R")
+sink("011c_pareto_k2_derivs.R")
 #
 cat("######################################################################\n")
 cat("#' First derivative of the density\n")
@@ -28,58 +32,59 @@ cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
-cat("gev_k3_fd=")
-print.function(gev_k3_fd)
+cat("pareto_k2_fd=")
+print.function(pareto_k2_fd)
 cat("######################################################################\n")
 cat("#' Second derivative of the density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("gev_k3_fdd=")
-print.function(gev_k3_fdd)
+cat("pareto_k2_fdd=")
+print.function(pareto_k2_fdd)
 cat("######################################################################\n")
 cat("#' First derivative of the cdf\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
-cat("gev_k3_pd=")
-print.function(gev_k3_pd)
+cat("pareto_k2_pd=")
+print.function(pareto_k2_pd)
 cat("######################################################################\n")
 cat("#' Second derivative of the cdf\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("gev_k3_pdd=")
-print.function(gev_k3_pdd)
+cat("pareto_k2_pdd=")
+print.function(pareto_k2_pdd)
 cat("############################################################\n")
 cat("#' Second derivative of the log density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("gev_k3_logfdd=")
-print.function(gev_k3_logfdd)
+cat("pareto_k2_logfdd=")
+print.function(pareto_k2_logfdd)
 cat("############################################################\n")
 cat("#' Third derivative of the log density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
-cat("gev_k3_logfddd=")
-print.function(gev_k3_logfddd)
+cat("pareto_k2_logfddd=")
+print.function(pareto_k2_logfddd)
 cat("############################################################\n")
 #
 cat("#' The first derivative of the density\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_k3_f1fa=function(x,v1,v2,kshape){
-	kshape=movexiawayfromzero(kshape)
-	vf=Vectorize(gev_k3_fd,\"x\")
-	f1=vf(x,v1,v2,kshape)
+"pareto_k2_f1fa=function(x,v1,kscale){
+	nx=length(x)
+	f1=matrix(0,1,nx)
+	vf=Vectorize(pareto_k2_fd,\"x\")
+	f1[1,]=vf(x,v1,v2=kscale)
 	return(f1)
 }\n"
 )
@@ -89,56 +94,52 @@ cat("#' The second derivative of the density\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_k3_f2fa=function(x,v1,v2,kshape){
+"pareto_k2_f2fa=function(x,v1,kscale){
 	nx=length(x)
-
-	kshape=movexiawayfromzero(kshape)
-
-	vf=Vectorize(gev_k3_fdd,\"x\")
-	temp1=vf(x,v1,v2,kshape)
-	f2=deriv_copyfdd(temp1,nx,dim=2)
+	f2=array(0,c(1,1,nx))
+	vf=Vectorize(pareto_k2_fdd,\"x\")
+	f2[1,1,]=vf(x,v1,v2=kscale)
 	return(f2)
 }\n"
 )
-###cat("############################################################\n")
-####
-###cat("#' The first derivative of the cdf\n")
-###cat("#' @inheritParams manf\n")
-###cat(
-###"gev_k3_p1fa=function(x,v1,v2,kshape){
-###	kshape=movexiawayfromzero(kshape)
-###	vf=Vectorize(gev_k3_pd,\"x\")
-###	p1=vf(x,v1,v2,kshape)
-###	return(p1)
-###}\n"
-###)
-###cat("############################################################\n")
-####
-###cat("#' The second derivative of the cdf\n")
-###cat("#' @inheritParams manf\n")
-###cat(
-###"gev_k3_p2fa=function(x,v1,v2,kshape){
-###	nx=length(x)
-###
-###	kshape=movexiawayfromzero(kshape)
-###
-###	vf=Vectorize(gev_k3_pdd,\"x\")
-###	temp1=vf(x,v1,v2,kshape)
-###	p2=deriv_copyfdd(temp1,nx,dim=2)
-###	return(p2)
-###}\n"
-###)
+cat("############################################################\n")
+#
+cat("#' The first derivative of the cdf\n")
+cat("#' @returns Vector\n")
+cat("#' @inheritParams manf\n")
+cat(
+"pareto_k2_p1fa=function(x,v1,kscale){
+	nx=length(x)
+	p1=matrix(0,1,nx)
+	vf=Vectorize(pareto_k2_pd,\"x\")
+	p1[1,]=vf(x,v1,v2=kscale)
+	return(p1)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The second derivative of the cdf\n")
+cat("#' @returns Matrix\n")
+cat("#' @inheritParams manf\n")
+cat(
+"pareto_k2_p2fa=function(x,v1,kscale){
+	nx=length(x)
+	p2=array(0,c(1,1,nx))
+	vf=Vectorize(pareto_k2_pdd,\"x\")
+	p2[1,1,]=vf(x,v1,v2=kscale)
+	return(p2)
+}\n"
+)
 cat("############################################################\n")
 #
 cat("#' Minus the first derivative of the cdf, at alpha\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_k3_mu1fa=function(alpha,v1,v2,kshape){
-	x=extraDistr::qgev((1-alpha),mu=v1,sigma=v2,xi=kshape)
-	kshape=movexiawayfromzero(kshape)
-	vf=Vectorize(gev_k3_pd,\"x\")
-	mu1=-vf(x,v1,v2,kshape)
+"pareto_k2_mu1fa=function(alpha,v1,kscale){
+	x=extraDistr::qpareto((1-alpha),a=v1,b=kscale)
+	vf=Vectorize(pareto_k2_pd,\"x\")
+	mu1=-vf(x,v1,kscale)
 	return(mu1)
 }\n"
 )
@@ -148,15 +149,11 @@ cat("#' Minus the second derivative of the cdf, at alpha\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_k3_mu2fa=function(alpha,v1,v2,kshape){
-	x=extraDistr::qgev((1-alpha),mu=v1,sigma=v2,xi=kshape)
+"pareto_k2_mu2fa=function(alpha,v1,kscale){
+	x=qpareto((1-alpha),a=v1,b=kscale)
 	nx=length(x)
-
-	kshape=movexiawayfromzero(kshape)
-
-	vf=Vectorize(gev_k3_pdd,\"x\")
-	temp1=vf(x,v1,v2,kshape)
-	mu2=-deriv_copyfdd(temp1,nx,dim=2)
+	vf=Vectorize(pareto_k2_pdd,\"x\")
+	mu2=-vf(x,v1,kscale)
 	return(mu2)
 }\n"
 )
@@ -166,14 +163,11 @@ cat("#' The second derivative of the normalized log-likelihood\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_k3_ldda=function(x,v1,v2,kshape){
+"pareto_k2_ldda=function(x,v1,kscale){
 	nx=length(x)
-
-	kshape=movexiawayfromzero(kshape)
-
-	vf=Vectorize(gev_k3_logfdd,\"x\")
-	temp1=vf(x,v1,v2,kshape)
-	ldd=deriv_copyldd(temp1,nx,dim=2)
+	ldd=matrix(0,1,1)
+	vf=Vectorize(pareto_k2_logfdd,\"x\")
+	ldd[1,1]=sum(vf(x,v1,v2=kscale))/nx
 	return(ldd)
 }\n"
 )
@@ -183,18 +177,16 @@ cat("#' The third derivative of the normalized log-likelihood\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_k3_lddda=function(x,v1,v2,kshape){
+"pareto_k2_lddda=function(x,v1,kscale){
 	nx=length(x)
-	vf=Vectorize(gev_k3_logfddd,\"x\")
-
-	kshape=movexiawayfromzero(kshape)
-
-	temp1=vf(x,v1,v2,kshape)
-	lddd=deriv_copylddd(temp1,nx,dim=2)
+	lddd=array(0,c(1,1,1))
+	temp=0
+	vf=Vectorize(pareto_k2_logfddd,\"x\")
+	lddd[1,1,1]=sum(vf(x,v1,v2=kscale))/nx
 	return(lddd)
 }\n"
 )
 #
 closeAllConnections()
-
 setwd(paste(Sys.getenv('HOME'),'/03 pn/05 statistics/fitdistcp/dmgsderivs/',sep=""))
+

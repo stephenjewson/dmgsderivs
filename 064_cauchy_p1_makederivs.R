@@ -3,23 +3,20 @@
 #
 setwd(paste(Sys.getenv('HOME'),'/97 MyRpackages/fitdistcp/R',sep=""))
 library(Deriv)
-library(extraDistr)
 #
-# following my ordering here which is mu,sigma,df
-f=function(x,v1,v2,v3){(1/sqrt(v3*pi))*(1/gamma(v3/2))*gamma((v3+1)/2)*(1/v2)*(1+(x-v1)^2/(v3*v2*v2))^(-(v3+1)/2)}
-compare("d",extraDistr::dlst(1,4,2,3),f(1,2,3,4))
-lst_k3_fd=Deriv(f,c("v1","v2"),nderiv=1)
-lst_k3_fdd=Deriv(f,c("v1","v2"),nderiv=2)
+f=function(x,t,v1,v2,v3){(1/(pi*v3))*1/(1+(x-v1-v2*t)^2/(v3*v3))}
+compare("d",dcauchy(1,3+4*2,5),f(1,2,3,4,5))
+cauchy_p1_fd=Deriv(f,c("v1","v2","v3"),nderiv=1)
+cauchy_p1_fdd=Deriv(f,c("v1","v2","v3"),nderiv=2)
 #
-cat("  no cdf\n")
+cat("  no cdf (well, contains arctan)\n")
 #
-logf=function(x,v1,v2,v3){log(gamma(0.5*(v3+1)))-0.5*log(pi)-0.5*log(v3)-
-		log(v2)-log(gamma(0.5*v3))-0.5*(v3+1)*log(1+(x-v1)^2/(v3*v2*v2))}
-compare("l",extraDistr::dlst(1,4,2,3,log=TRUE),logf(1,2,3,4))
-lst_k3_logfdd=Deriv(logf,c("v1","v2"),nderiv=2)
-lst_k3_logfddd=Deriv(logf,c("v1","v2"),nderiv=3)
+logf=function(x,t,v1,v2,v3){-log(pi)-log(v3)-log(1+((x-v1-v2*t)/v3)^2)}
+compare("l",dcauchy(1,3+4*2,5,log=TRUE),logf(1,2,3,4,5))
+cauchy_p1_logfdd=Deriv(logf,c("v1","v2","v3"),nderiv=2)
+cauchy_p1_logfddd=Deriv(logf,c("v1","v2","v3"),nderiv=3)
 #
-sink("41c_lst_k3_derivs.R")
+sink("064c_cauchy_p1_derivs.R")
 #
 cat("######################################################################\n")
 cat("#' First derivative of the density\n")
@@ -27,41 +24,42 @@ cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
-cat("lst_k3_fd=")
-print.function(lst_k3_fd)
+cat("cauchy_p1_fd=")
+print.function(cauchy_p1_fd)
 cat("######################################################################\n")
 cat("#' Second derivative of the density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
+cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("lst_k3_fdd=")
-print.function(lst_k3_fdd)
+cat("cauchy_p1_fdd=")
+print.function(cauchy_p1_fdd)
 cat("############################################################\n")
 cat("#' Second derivative of the log density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("lst_k3_logfdd=")
-print.function(lst_k3_logfdd)
+cat("cauchy_p1_logfdd=")
+print.function(cauchy_p1_logfdd)
 cat("############################################################\n")
 cat("#' Third derivative of the log density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
-cat("lst_k3_logfddd=")
-print.function(lst_k3_logfddd)
+cat("cauchy_p1_logfddd=")
+print.function(cauchy_p1_logfddd)
 cat("############################################################\n")
 #
 cat("#' The first derivative of the density\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lst_k3_f1fa=function(x,v1,v2,kdf){
-	vf=Vectorize(lst_k3_fd,\"x\")
-	f1=vf(x,v1,v2,kdf)
+"cauchy_p1_f1fa=function(x,t,v1,v2,v3){
+	vf=Vectorize(cauchy_p1_fd,\"x\")
+	f1=vf(x,t,v1,v2,v3)
 	return(f1)
 }\n"
 )
@@ -71,49 +69,25 @@ cat("#' The second derivative of the density\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lst_k3_f2fa=function(x,v1,v2,kdf){
+"cauchy_p1_f2fa=function(x,t,v1,v2,v3){
 	nx=length(x)
-	vf=Vectorize(lst_k3_fdd,\"x\")
-	temp1=vf(x,v1,v2,kdf)
-	f2=deriv_copyfdd(temp1,nx,dim=2)
+	vf=Vectorize(cauchy_p1_fdd,\"x\")
+	temp1=vf(x,t,v1,v2,v3)
+	f2=deriv_copyfdd(temp1,nx,dim=3)
 	return(f2)
 }\n"
 )
-cat("############################################################\n")
-#
-###cat("#' The first derivative of the cdf\n")
-###cat("#' @inheritParams manf\n")
-###cat(
-###"lst_k3_p1fa=function(x,v1,v2,kdf){
-###	vf=Vectorize(lst_k3_pd,\"x\")
-###	p1=vf(x,v1,v2,kdf)
-###	return(p1)
-###}\n"
-###)
-cat("############################################################\n")
-#
-###cat("#' The second derivative of the cdf\n")
-###cat("#' @inheritParams manf\n")
-###cat(
-###"lst_k3_p2fa=function(x,v1,v2,kdf){
-###	nx=length(x)
-###	vf=Vectorize(lst_k3_pdd,\"x\")
-###	temp1=vf(x,v1,v2,kdf)
-###	p2=deriv_copyfdd(temp1,nx,dim=2)
-###	return(p2)
-###}\n"
-###)
 cat("############################################################\n")
 #
 cat("#' The second derivative of the normalized log-likelihood\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lst_k3_ldda=function(x,v1,v2,kdf){
+"cauchy_p1_ldda=function(x,t,v1,v2,v3){
 	nx=length(x)
-	vf=Vectorize(lst_k3_logfdd,\"x\")
-	temp1=vf(x,v1,v2,kdf)
-	ldd=deriv_copyldd(temp1,nx,dim=2)
+	vf=Vectorize(cauchy_p1_logfdd,\"x\")
+	temp1=vf(x,t,v1,v2,v3)
+	ldd=deriv_copyldd(temp1,nx,dim=3)
 	return(ldd)
 }\n"
 )
@@ -123,11 +97,11 @@ cat("#' The third derivative of the normalized log-likelihood\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lst_k3_lddda=function(x,v1,v2,kdf){
+"cauchy_p1_lddda=function(x,t,v1,v2,v3){
 	nx=length(x)
-	vf=Vectorize(lst_k3_logfddd,\"x\")
-	temp1=vf(x,v1,v2,kdf)
-	lddd=deriv_copylddd(temp1,nx,dim=2)
+	vf=Vectorize(cauchy_p1_logfddd,\"x\")
+	temp1=vf(x,t,v1,v2,v3)
+	lddd=deriv_copylddd(temp1,nx,dim=3)
 	return(lddd)
 }\n"
 )

@@ -23,7 +23,7 @@ compare("l",extraDistr::dlst(1,8,4+5*2,exp(.6+.7*.3),log=TRUE),logf(1,2,.3,4,5,.
 lst_p12k3_logfdd=Deriv(logf,c("v1","v2","v3","v4"),nderiv=2)
 lst_p12k3_logfddd=Deriv(logf,c("v1","v2","v3","v4"),nderiv=3)
 #
-sink("81c_lst_p12k3_derivs.R")
+sink("081c_lst_p12k3_derivs.R")
 #
 cat("######################################################################\n")
 cat("#' First derivative of the density\n")

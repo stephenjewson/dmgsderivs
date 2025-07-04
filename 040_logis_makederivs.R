@@ -4,24 +4,24 @@
 setwd(paste(Sys.getenv('HOME'),'/97 MyRpackages/fitdistcp/R',sep=""))
 library(Deriv)
 #
-# v1=shape
-# v2=scale
-f=function(x,t,v1,v2,v3){(v1/exp(v2+v3*t))*((x/exp(v2+v3*t))^(v1-1))*exp(-((x/exp(v2+v3*t))^v1))}
-compare("d",dweibull(1,3,exp(.4+.5*.2)),f(1,.2,3,.4,.5))
-weibull_p2_fd=Deriv(f,c("v1","v2","v3"),nderiv=1)
-weibull_p2_fdd=Deriv(f,c("v1","v2","v3"),nderiv=2)
+# note that the R definition of the pdf seems to be missing minus signs, so using wikipedia
 #
-p=function(x,t,v1,v2,v3){1-exp(-((x*exp(-v2-v3*t))^v1))}
-compare("p",pweibull(1,3,exp(.4+.5*.2)),p(1,.2,3,.4,.5))
-weibull_p2_pd=Deriv(p,c("v1","v2","v3"),nderiv=1)
-weibull_p2_pdd=Deriv(p,c("v1","v2","v3"),nderiv=2)
+f=function(x,v1,v2){(1/v2)*exp(-(x-v1)/v2)/((1+exp(-(x-v1)/v2))^2)}
+compare("d",dlogis(1,2,3),f(1,2,3))
+logis_fd=Deriv(f,c("v1","v2"),nderiv=1)
+logis_fdd=Deriv(f,c("v1","v2"),nderiv=2)
 #
-logf=function(x,t,v1,v2,v3){log(v1)-v2-v3*t+(v1-1)*log(x)-(v1-1)*(v2+v3*t)-(x/exp(v2+v3*t))^v1}
-compare("l",dweibull(1,3,exp(.4+.5*.2),log=TRUE),logf(1,.2,3,.4,.5))
-weibull_p2_logfdd=Deriv(logf,c("v1","v2","v3"),nderiv=2)
-weibull_p2_logfddd=Deriv(logf,c("v1","v2","v3"),nderiv=3)
+p=function(x,v1,v2){1/(1+exp(-(x-v1)/v2))}
+compare("p",plogis(1,2,3),p(1,2,3))
+logis_pd=Deriv(p,c("v1","v2"),nderiv=1)
+logis_pdd=Deriv(p,c("v1","v2"),nderiv=2)
 #
-sink("73c_weibull_p2_derivs.R")
+logf=function(x,v1,v2){-log(v2)-(x-v1)/v2-2*log(1+exp(-(x-v1)/v2))}
+compare("l",dlogis(1,2,3,log=TRUE),logf(1,2,3))
+logis_logfdd=Deriv(logf,c("v1","v2"),nderiv=2)
+logis_logfddd=Deriv(logf,c("v1","v2"),nderiv=3)
+#
+sink("040c_logis_derivs.R")
 #
 cat("######################################################################\n")
 cat("#' First derivative of the density\n")
@@ -29,57 +29,57 @@ cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
-cat("weibull_p2_fd=")
-print.function(weibull_p2_fd)
+cat("logis_fd=")
+print.function(logis_fd)
 cat("######################################################################\n")
 cat("#' Second derivative of the density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("weibull_p2_fdd=")
-print.function(weibull_p2_fdd)
+cat("logis_fdd=")
+print.function(logis_fdd)
 cat("######################################################################\n")
 cat("#' First derivative of the cdf\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
-cat("weibull_p2_pd=")
-print.function(weibull_p2_pd)
+cat("logis_pd=")
+print.function(logis_pd)
 cat("######################################################################\n")
 cat("#' Second derivative of the cdf\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("weibull_p2_pdd=")
-print.function(weibull_p2_pdd)
+cat("logis_pdd=")
+print.function(logis_pdd)
 cat("############################################################\n")
 cat("#' Second derivative of the log density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("weibull_p2_logfdd=")
-print.function(weibull_p2_logfdd)
+cat("logis_logfdd=")
+print.function(logis_logfdd)
 cat("############################################################\n")
 cat("#' Third derivative of the log density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
-cat("weibull_p2_logfddd=")
-print.function(weibull_p2_logfddd)
+cat("logis_logfddd=")
+print.function(logis_logfddd)
 cat("############################################################\n")
 #
 cat("#' The first derivative of the density\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"weibull_p2_f1fa=function(x,t,v1,v2,v3){
-	vf=Vectorize(weibull_p2_fd,\"x\")
-	f1=vf(x,t,v1,v2,v3)
+"logis_f1fa=function(x,v1,v2){
+	vf=Vectorize(logis_fd,\"x\")
+	f1=vf(x,v1,v2)
 	return(f1)
 }\n"
 )
@@ -89,11 +89,11 @@ cat("#' The second derivative of the density\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"weibull_p2_f2fa=function(x,t,v1,v2,v3){
+"logis_f2fa=function(x,v1,v2){
 	nx=length(x)
-	vf=Vectorize(weibull_p2_fdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
-	f2=deriv_copyfdd(temp1,nx,dim=3)
+	vf=Vectorize(logis_fdd,\"x\")
+	temp1=vf(x,v1,v2)
+	f2=deriv_copyfdd(temp1,nx,dim=2)
 	return(f2)
 }\n"
 )
@@ -103,23 +103,23 @@ cat("#' The first derivative of the cdf\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"weibull_p2_p1fa=function(x,t,v1,v2,v3){
-	vf=Vectorize(weibull_p2_pd,\"x\")
-	p1=vf(x,t,v1,v2,v3)
+"logis_p1fa=function(x,v1,v2){
+	vf=Vectorize(logis_pd,\"x\")
+	p1=vf(x,v1,v2)
 	return(p1)
 }\n"
 )
 cat("############################################################\n")
 #
 cat("#' The second derivative of the cdf\n")
-cat("#' @returns Matrix\n")
+cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"weibull_p2_p2fa=function(x,t,v1,v2,v3){
+"logis_p2fa=function(x,v1,v2){
 	nx=length(x)
-	vf=Vectorize(weibull_p2_pdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
-	p2=deriv_copyfdd(temp1,nx,dim=3)
+	vf=Vectorize(logis_pdd,\"x\")
+	temp1=vf(x,v1,v2)
+	p2=deriv_copyfdd(temp1,nx,dim=2)
 	return(p2)
 }\n"
 )
@@ -129,10 +129,10 @@ cat("#' Minus the first derivative of the cdf, at alpha\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"weibull_p2_mu1fa=function(alpha,t,v1,v2,v3){
-	x=qweibull((1-alpha),shape=v1,scale=exp(v2+v3*t))
-	vf=Vectorize(weibull_p2_pd,\"x\")
-	mu1=-vf(x,t,v1,v2,v3)
+"logis_mu1fa=function(alpha,v1,v2){
+	x=qlogis((1-alpha),location=v1,scale=v2)
+	vf=Vectorize(logis_pd,\"x\")
+	mu1=-vf(x,v1,v2)
 	return(mu1)
 }\n"
 )
@@ -142,12 +142,12 @@ cat("#' Minus the second derivative of the cdf, at alpha\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"weibull_p2_mu2fa=function(alpha,t,v1,v2,v3){
-	x=qweibull((1-alpha),shape=v1,scale=exp(v2+v3*t))
+"logis_mu2fa=function(alpha,v1,v2){
+	x=qlogis((1-alpha),location=v1,scale=v2)
 	nx=length(x)
-	vf=Vectorize(weibull_p2_pdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
-	mu2=-deriv_copyfdd(temp1,nx,dim=3)
+	vf=Vectorize(logis_pdd,\"x\")
+	temp1=vf(x,v1,v2)
+	mu2=-deriv_copyfdd(temp1,nx,dim=2)
 	return(mu2)
 }\n"
 )
@@ -157,11 +157,11 @@ cat("#' The second derivative of the normalized log-likelihood\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"weibull_p2_ldda=function(x,t,v1,v2,v3){
+"logis_ldda=function(x,v1,v2){
 	nx=length(x)
-	vf=Vectorize(weibull_p2_logfdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
-	ldd=deriv_copyldd(temp1,nx,dim=3)
+	vf=Vectorize(logis_logfdd,\"x\")
+	temp1=vf(x,v1,v2)
+	ldd=deriv_copyldd(temp1,nx,dim=2)
 	return(ldd)
 }\n"
 )
@@ -171,14 +171,15 @@ cat("#' The third derivative of the normalized log-likelihood\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
 cat(
-"weibull_p2_lddda=function(x,t,v1,v2,v3){
+"logis_lddda=function(x,v1,v2){
 	nx=length(x)
-	vf=Vectorize(weibull_p2_logfddd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
-	lddd=deriv_copylddd(temp1,nx,dim=3)
+	vf=Vectorize(logis_logfddd,\"x\")
+	temp1=vf(x,v1,v2)
+	lddd=deriv_copylddd(temp1,nx,dim=2)
 	return(lddd)
 }\n"
 )
 #
 closeAllConnections()
+
 setwd(paste(Sys.getenv('HOME'),'/03 pn/05 statistics/fitdistcp/dmgsderivs/',sep=""))

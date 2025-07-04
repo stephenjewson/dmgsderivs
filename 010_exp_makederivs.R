@@ -1,26 +1,28 @@
 #
 # make derivative codes for fitdistcp, one model at a time
 #
+# for exp, I don't actually use the mu and p routines
+# but I add them here, so that I can derive them for exp_p1, where I do use them
+#
 setwd(paste(Sys.getenv('HOME'),'/97 MyRpackages/fitdistcp/R',sep=""))
 library(Deriv)
-library(extraDistr)
 #
-f=function(x,t,v1,v2,v3){(1/sqrt(2*pi))*(1/v3)*(1/x)*exp(-(log(x)-v1-v2*t)^2/(2*v3*v3))}
-compare("d",dlnorm(1,3+4*2,5),f(1,2,3,4,5))
-lnorm_p1_fd=Deriv(f,c("v1","v2","v3"),nderiv=1)
-lnorm_p1_fdd=Deriv(f,c("v1","v2","v3"),nderiv=2)
+f=function(x,v1){v1*exp(-v1*x)}
+compare("d",dexp(1,2),f(1,2))
+exp_fd=Deriv(f,"v1",nderiv=1)
+exp_fdd=Deriv(f,"v1",nderiv=2)
 #
-p=function(x,t,v1,v2,v3){pnorm((log(x)-v1-v2*t)/v3)}
-compare("p",plnorm(1,3+4*2,5),p(1,2,3,4,5))
-lnorm_p1_pd=Deriv(p,c("v1","v2","v3"),nderiv=1)
-lnorm_p1_pdd=Deriv(p,c("v1","v2","v3"),nderiv=2)
+p=function(x,v1){1-exp(-v1*x)}
+compare("p",pexp(1,2),p(1,2))
+exp_pd=Deriv(p,"v1",nderiv=1)
+exp_pdd=Deriv(p,"v1",nderiv=2)
 #
-logf=function(x,t,v1,v2,v3){-0.5*log(2*pi)-log(v3)-log(x)-(log(x)-v1-v2*t)^2/(2*v3*v3)}
-compare("l",dlnorm(1,3+4*2,5,log=TRUE),logf(1,2,3,4,5))
-lnorm_p1_logfdd=Deriv(logf,c("v1","v2","v3"),nderiv=2)
-lnorm_p1_logfddd=Deriv(logf,c("v1","v2","v3"),nderiv=3)
+logf=function(x,v1){log(v1)-v1*x}
+compare("l",dexp(1,2,log=TRUE),logf(1,2))
+exp_logfdd=Deriv(logf,"v1",nderiv=2)
+exp_logfddd=Deriv(logf,"v1",nderiv=3)
 #
-sink("61c_lnorm_p1_derivs.R")
+sink("010c_exp_derivs.R")
 #
 cat("######################################################################\n")
 cat("#' First derivative of the density\n")
@@ -28,57 +30,59 @@ cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
-cat("lnorm_p1_fd=")
-print.function(lnorm_p1_fd)
+cat("exp_fd=")
+print.function(exp_fd)
 cat("######################################################################\n")
 cat("#' Second derivative of the density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
-cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("lnorm_p1_fdd=")
-print.function(lnorm_p1_fdd)
+cat("#' @returns Matrix\n")
+cat("exp_fdd=")
+print.function(exp_fdd)
 cat("######################################################################\n")
 cat("#' First derivative of the cdf\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
-cat("lnorm_p1_pd=")
-print.function(lnorm_p1_pd)
+cat("exp_pd=")
+print.function(exp_pd)
 cat("######################################################################\n")
 cat("#' Second derivative of the cdf\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("lnorm_p1_pdd=")
-print.function(lnorm_p1_pdd)
-cat("############################################################\n")
+cat("exp_pdd=")
+print.function(exp_pdd)
+cat("######################################################################\n")
 cat("#' Second derivative of the log density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("lnorm_p1_logfdd=")
-print.function(lnorm_p1_logfdd)
+cat("exp_logfdd=")
+print.function(exp_logfdd)
 cat("############################################################\n")
 cat("#' Third derivative of the log density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
-cat("lnorm_p1_logfddd=")
-print.function(lnorm_p1_logfddd)
+cat("exp_logfddd=")
+print.function(exp_logfddd)
 cat("############################################################\n")
 #
 cat("#' The first derivative of the density\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lnorm_p1_f1fa=function(x,t,v1,v2,v3){
-	vf=Vectorize(lnorm_p1_fd,\"x\")
-	f1=vf(x,t,v1,v2,v3)
+"exp_f1fa=function(x,v1){
+	nx=length(x)
+	f1=matrix(0,1,nx)
+	vf=Vectorize(exp_fd,\"x\")
+	f1[1,]=vf(x,v1)
 	return(f1)
 }\n"
 )
@@ -88,11 +92,11 @@ cat("#' The second derivative of the density\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lnorm_p1_f2fa=function(x,t,v1,v2,v3){
+"exp_f2fa=function(x,v1){
 	nx=length(x)
-	vf=Vectorize(lnorm_p1_fdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
-	f2=deriv_copyfdd(temp1,nx,dim=3)
+	f2=array(0,c(1,1,nx))
+	vf=Vectorize(exp_fdd,\"x\")
+	f2[1,1,]=vf(x,v1)
 	return(f2)
 }\n"
 )
@@ -102,9 +106,11 @@ cat("#' The first derivative of the cdf\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lnorm_p1_p1fa=function(x,t,v1,v2,v3){
-	vf=Vectorize(lnorm_p1_pd,\"x\")
-	p1=vf(x,t,v1,v2,v3)
+"exp_p1fa=function(x,v1){
+	nx=length(x)
+	p1=matrix(0,1,nx)
+	vf=Vectorize(exp_pd,\"x\")
+	p1[1,]=vf(x,v1)
 	return(p1)
 }\n"
 )
@@ -114,53 +120,51 @@ cat("#' The second derivative of the cdf\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lnorm_p1_p2fa=function(x,t,v1,v2,v3){
+"exp_p2fa=function(x,v1){
 	nx=length(x)
-	vf=Vectorize(lnorm_p1_pdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
-	p2=deriv_copyfdd(temp1,nx,dim=3)
+	p2=array(0,c(1,1,nx))
+	vf=Vectorize(exp_pdd,\"x\")
+	p2[1,1,]=vf(x,v1)
 	return(p2)
 }\n"
 )
-cat("############################################################\n")
-#
-cat("#' Minus the first derivative of the cdf, at alpha\n")
-cat("#' @returns Vector\n")
-cat("#' @inheritParams manf\n")
-cat(
-"lnorm_p1_mu1fa=function(alpha,t,v1,v2,v3){
-	x=qlnorm((1-alpha),meanlog=v1+v2*t,sdlog=v3)
-	vf=Vectorize(lnorm_p1_pd,\"x\")
-	mu1=-vf(x,t,v1,v2,v3)
-	return(mu1)
-}\n"
-)
-cat("############################################################\n")
-#
-cat("#' Minus the second derivative of the cdf, at alpha\n")
-cat("#' @returns Matrix\n")
-cat("#' @inheritParams manf\n")
-cat(
-"lnorm_p1_mu2fa=function(alpha,t,v1,v2,v3){
-	x=qlnorm((1-alpha),meanlog=v1+v2*t,sdlog=v3)
-	nx=length(x)
-	vf=Vectorize(lnorm_p1_pdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
-	mu2=-deriv_copyfdd(temp1,nx,dim=3)
-	return(mu2)
-}\n"
-)
+###cat("############################################################\n")
+####
+###cat("#' Minus the first derivative of the cdf, at alpha\n")
+###cat("#' @returns Vector\n")
+###cat("#' @inheritParams manf\n")
+###cat(
+###"exp_mu1fa=function(alpha,v1){
+###	x=qexp((1-alpha),rate=v1)
+###	vf=Vectorize(exp_pd,\"x\")
+###	mu1=-vf(x,v1)
+###	return(mu1)
+###}\n"
+###)
+###cat("############################################################\n")
+####
+###cat("#' Minus the second derivative of the cdf, at alpha\n")
+###cat("#' @inheritParams manf\n")
+###cat(
+###"exp_mu2fa=function(alpha,v1){
+###	x=qexp((1-alpha),rate=v1)
+###	nx=length(x)
+###	vf=Vectorize(exp_pdd,\"x\")
+###	mu2=-vf(x,v1)
+###	return(mu2)
+###}\n"
+###)
 cat("############################################################\n")
 #
 cat("#' The second derivative of the normalized log-likelihood\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lnorm_p1_ldda=function(x,t,v1,v2,v3){
+"exp_ldda=function(x,v1){
 	nx=length(x)
-	vf=Vectorize(lnorm_p1_logfdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
-	ldd=deriv_copyldd(temp1,nx,dim=3)
+	ldd=matrix(0,1,1)
+	vf=Vectorize(exp_logfdd,\"x\")
+	ldd[1,1]=sum(vf(x,v1))/nx
 	return(ldd)
 }\n"
 )
@@ -170,11 +174,11 @@ cat("#' The third derivative of the normalized log-likelihood\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lnorm_p1_lddda=function(x,t,v1,v2,v3){
+"exp_lddda=function(x,v1){
 	nx=length(x)
-	vf=Vectorize(lnorm_p1_logfddd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
-	lddd=deriv_copylddd(temp1,nx,dim=3)
+	lddd=array(0,c(1,1,1))
+	vf=Vectorize(exp_logfddd,\"x\")
+	lddd[1,1,1]=sum(vf(x,v1))/nx
 	return(lddd)
 }\n"
 )
