@@ -182,7 +182,7 @@ cat(
 
 	v3=movexiawayfromzero(v3)
 
-	vf=Vectorize(gev_p12_logfdd,\"x\")
+	vf=Vectorize(gev_p12_logfdd,c(\"x\",\"t1\",\"t2\"))
 	temp1=vf(x,t1,t2,v1,v2,v3,v4,v5)
 	ldd=deriv_copyldd(temp1,nx,dim=5)
 	return(ldd)
@@ -199,7 +199,7 @@ cat(
 
 	v3=movexiawayfromzero(v3)
 
-	vf=Vectorize(gev_p12_logfddd,\"x\")
+	vf=Vectorize(gev_p12_logfddd,c(\"x\",\"t1\",\"t2\"))
 	temp1=vf(x,t1,t2,v1,v2,v3,v4,v5)
 	lddd=deriv_copylddd(temp1,nx,dim=5)
 	return(lddd)

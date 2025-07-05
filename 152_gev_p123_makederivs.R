@@ -83,12 +83,12 @@ cat("#' The first derivative of the density\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p123_f1fa=function(x,t01,t02,t03,v1,v2,v3,v4,v5,v6){
+"gev_p123_f1fa=function(x,t1,t2,t3,v1,v2,v3,v4,v5,v6){
 
 	v3=movexiawayfromzero(v3)
 
 	vf=Vectorize(gev_p123_fd,\"x\")
-	f1=vf(x,t01,t02,t03,v1,v2,v3,v4,v5,v6)
+	f1=vf(x,t1,t2,t3,v1,v2,v3,v4,v5,v6)
 	return(f1)
 }\n"
 )
@@ -98,13 +98,13 @@ cat("#' The second derivative of the density\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p123_f2fa=function(x,t01,t02,t03,v1,v2,v3,v4,v5,v6){
+"gev_p123_f2fa=function(x,t1,t2,t3,v1,v2,v3,v4,v5,v6){
 	nx=length(x)
 
 	v3=movexiawayfromzero(v3)
 
 	vf=Vectorize(gev_p123_fdd,\"x\")
-	temp1=vf(x,t01,t02,t03,v1,v2,v3,v4,v5,v6)
+	temp1=vf(x,t1,t2,t3,v1,v2,v3,v4,v5,v6)
 	f2=deriv_copyfdd(temp1,nx,dim=6)
 	return(f2)
 }\n"
@@ -114,12 +114,12 @@ cat(
 ###cat("#' The first derivative of the cdf\n")
 ###cat("#' @inheritParams manf\n")
 ###cat(
-###"gev_p123_p1fa=function(x,t01,t02,t03,v1,v2,v3,v4,v5,v6){
+###"gev_p123_p1fa=function(x,t1,t2,t3,v1,v2,v3,v4,v5,v6){
 ###
 ###	v3=movexiawayfromzero(v3)
 ###
 ###	vf=Vectorize(gev_p123_pd,\"x\")
-###	p1=vf(x,t01,t02,t03,v1,v2,v3,v4,v5,v6)
+###	p1=vf(x,t1,t2,t3,v1,v2,v3,v4,v5,v6)
 ###	return(p1)
 ###}\n"
 ###)
@@ -128,13 +128,13 @@ cat(
 ###cat("#' The second derivative of the cdf\n")
 ###cat("#' @inheritParams manf\n")
 ###cat(
-###"gev_p123_p2fa=function(x,t01,t02,t03,v1,v2,v3,v4,v5,v6){
+###"gev_p123_p2fa=function(x,t1,t2,t3,v1,v2,v3,v4,v5,v6){
 ###	nx=length(x)
 ###
 ###	v3=movexiawayfromzero(v3)
 ###
 ###	vf=Vectorize(gev_p123_pdd,\"x\")
-###	temp1=vf(x,t01,t02,t03,v1,v2,v3,v4,v5,v6)
+###	temp1=vf(x,t1,t2,t3,v1,v2,v3,v4,v5,v6)
 ###	p2=deriv_copyfdd(temp1,nx,dim=6)
 ###	return(p2)
 ###}\n"
@@ -184,7 +184,7 @@ cat(
 
 	v3=movexiawayfromzero(v3)
 
-	vf=Vectorize(gev_p123_logfdd,\"x\")
+	vf=Vectorize(gev_p123_logfdd,c(\"x\",\"t1\",\"t2\",\"t3\"))
 	temp1=vf(x,t1,t2,t3,v1,v2,v3,v4,v5,v6)
 	ldd=deriv_copyldd(temp1,nx,dim=6)
 	return(ldd)
@@ -201,7 +201,7 @@ cat(
 
 	v3=movexiawayfromzero(v3)
 
-	vf=Vectorize(gev_p123_logfddd,\"x\")
+	vf=Vectorize(gev_p123_logfddd,c(\"x\",\"t1\",\"t2\",\"t3\"))
 	temp1=vf(x,t1,t2,t3,v1,v2,v3,v4,v5,v6)
 	lddd=deriv_copylddd(temp1,nx,dim=6)
 	return(lddd)

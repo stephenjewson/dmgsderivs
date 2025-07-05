@@ -82,10 +82,10 @@ cat("#' The first derivative of the density\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p12k3_f1fa=function(x,t,v1,v2,v3,v4,kshape){
+"gev_p12k3_f1fa=function(x,t1,t2,v1,v2,v3,v4,kshape){
 	kshape=movexiawayfromzero(kshape)
-	vf=Vectorize(gev_p12k3_fd,\"x\")
-	f1=vf(x,t[,1],t[,2],v1,v2,v3,v4,kshape)
+	vf=Vectorize(gev_p12k3_fd,c(\"x\",\"t1\",\"t2\"))
+	f1=vf(x,t1,t2,v1,v2,v3,v4,kshape)
 	return(f1)
 }\n"
 )
@@ -95,13 +95,13 @@ cat("#' The second derivative of the density\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p12k3_f2fa=function(x,t,v1,v2,v3,v4,kshape){
+"gev_p12k3_f2fa=function(x,t1,t2,v1,v2,v3,v4,kshape){
 	nx=length(x)
 
 	kshape=movexiawayfromzero(kshape)
 
-	vf=Vectorize(gev_p12k3_fdd,\"x\")
-	temp1=vf(x,t[,1],t[,2],v1,v2,v3,v4,kshape)
+	vf=Vectorize(gev_p12k3_fdd,c(\"x\",\"t1\",\"t2\"))
+	temp1=vf(x,t1,t2,v1,v2,v3,v4,kshape)
 	f2=deriv_copyfdd(temp1,nx,dim=4)
 	return(f2)
 }\n"
@@ -111,10 +111,10 @@ cat(
 ###cat("#' The first derivative of the cdf\n")
 ###cat("#' @inheritParams manf\n")
 ###cat(
-###"gev_p12k3_p1fa=function(x,t,v1,v2,v3,v4,kshape){
+###"gev_p12k3_p1fa=function(x,t01,t02,v1,v2,v3,v4,kshape){
 ###	kshape=movexiawayfromzero(kshape)
 ###	vf=Vectorize(gev_p12k3_pd,\"x\")
-###	p1=vf(x,t[,1],t[,2],v1,v2,v3,v4,kshape)
+###	p1=vf(x,t01,t02,v1,v2,v3,v4,kshape)
 ###	return(p1)
 ###}\n"
 ###)
@@ -123,13 +123,13 @@ cat(
 ###cat("#' The second derivative of the cdf\n")
 ###cat("#' @inheritParams manf\n")
 ###cat(
-###"gev_p12k3_p2fa=function(x,t,v1,v2,v3,v4,kshape){
+###"gev_p12k3_p2fa=function(x,t01,t02,v1,v2,v3,v4,kshape){
 ###	nx=length(x)
 ###
 ###	kshape=movexiawayfromzero(kshape)
 ###
 ###	vf=Vectorize(gev_p12k3_pdd,\"x\")
-###	temp1=vf(x,t[,1],t[,2],v1,v2,v3,v4,kshape)
+###	temp1=vf(x,t01,t02,v1,v2,v3,v4,kshape)
 ###	p2=deriv_copyfdd(temp1,nx,dim=4)
 ###	return(p2)
 ###}\n"
@@ -140,11 +140,11 @@ cat("#' Minus the first derivative of the cdf, at alpha\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p12k3_mu1fa=function(alpha,t,v1,v2,v3,v4,kshape){
-	x=extraDistr::qgev((1-alpha),mu=v1+v2*t[,1],sigma=exp(v3+v4*t[,2]),xi=kshape)
+"gev_p12k3_mu1fa=function(alpha,t01,t02,v1,v2,v3,v4,kshape){
+	x=extraDistr::qgev((1-alpha),mu=v1+v2*t01,sigma=exp(v3+v4*t02),xi=kshape)
 	kshape=movexiawayfromzero(kshape)
 	vf=Vectorize(gev_p12k3_pd,\"x\")
-	mu1=-vf(x,t[,1],t[,2],v1,v2,v3,v4,kshape)
+	mu1=-vf(x,t01,t02,v1,v2,v3,v4,kshape)
 	return(mu1)
 }\n"
 )
@@ -154,14 +154,14 @@ cat("#' Minus the second derivative of the cdf, at alpha\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p12k3_mu2fa=function(alpha,t,v1,v2,v3,v4,kshape){
-	x=extraDistr::qgev((1-alpha),mu=v1+v2*t[,1],sigma=exp(v3+v4*t[,2]),xi=kshape)
+"gev_p12k3_mu2fa=function(alpha,t01,t02,v1,v2,v3,v4,kshape){
+	x=extraDistr::qgev((1-alpha),mu=v1+v2*t01,sigma=exp(v3+v4*t02),xi=kshape)
 	nx=length(x)
 
 	kshape=movexiawayfromzero(kshape)
 
 	vf=Vectorize(gev_p12k3_pdd,\"x\")
-	temp1=vf(x,t[,1],t[,2],v1,v2,v3,v4,kshape)
+	temp1=vf(x,t01,t02,v1,v2,v3,v4,kshape)
 	mu2=-deriv_copyfdd(temp1,nx,dim=4)
 	return(mu2)
 }\n"
@@ -172,13 +172,13 @@ cat("#' The second derivative of the normalized log-likelihood\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p12k3_ldda=function(x,t,v1,v2,v3,v4,kshape){
+"gev_p12k3_ldda=function(x,t1,t2,v1,v2,v3,v4,kshape){
 	nx=length(x)
 
 	kshape=movexiawayfromzero(kshape)
 
-	vf=Vectorize(gev_p12k3_logfdd,\"x\")
-	temp1=vf(x,t[,1],t[,2],v1,v2,v3,v4,kshape)
+	vf=Vectorize(gev_p12k3_logfdd,c(\"x\",\"t1\",\"t2\"))
+	temp1=vf(x,t1,t2,v1,v2,v3,v4,kshape)
 	ldd=deriv_copyldd(temp1,nx,dim=4)
 	return(ldd)
 }\n"
@@ -189,13 +189,13 @@ cat("#' The third derivative of the normalized log-likelihood\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p12k3_lddda=function(x,t,v1,v2,v3,v4,kshape){
+"gev_p12k3_lddda=function(x,t1,t2,v1,v2,v3,v4,kshape){
 	nx=length(x)
-	vf=Vectorize(gev_p12k3_logfddd,\"x\")
+	vf=Vectorize(gev_p12k3_logfddd,c(\"x\",\"t1\",\"t2\"))
 
 	kshape=movexiawayfromzero(kshape)
 
-	temp1=vf(x,t[,1],t[,2],v1,v2,v3,v4,kshape)
+	temp1=vf(x,t1,t2,v1,v2,v3,v4,kshape)
 	lddd=deriv_copylddd(temp1,nx,dim=4)
 	return(lddd)
 }\n"

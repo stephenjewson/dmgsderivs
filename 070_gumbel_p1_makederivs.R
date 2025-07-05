@@ -76,9 +76,9 @@ cat("#' The first derivative of the density\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gumbel_p1_f1fa=function(x,t,v1,v2,v3){
+"gumbel_p1_f1fa=function(x,t0,v1,v2,v3){
 	vf=Vectorize(gumbel_p1_fd,\"x\")
-	f1=vf(x,t,v1,v2,v3)
+	f1=vf(x,t0,v1,v2,v3)
 	return(f1)
 }\n"
 )
@@ -88,10 +88,10 @@ cat("#' The second derivative of the density\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gumbel_p1_f2fa=function(x,t,v1,v2,v3){
+"gumbel_p1_f2fa=function(x,t0,v1,v2,v3){
 	nx=length(x)
 	vf=Vectorize(gumbel_p1_fdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
+	temp1=vf(x,t0,v1,v2,v3)
 	f2=deriv_copyfdd(temp1,nx,dim=3)
 	return(f2)
 }\n"
@@ -102,9 +102,9 @@ cat("#' The first derivative of the cdf\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gumbel_p1_p1fa=function(x,t,v1,v2,v3){
+"gumbel_p1_p1fa=function(x,t0,v1,v2,v3){
 	vf=Vectorize(gumbel_p1_pd,\"x\")
-	p1=vf(x,t,v1,v2,v3)
+	p1=vf(x,t0,v1,v2,v3)
 	return(p1)
 }\n"
 )
@@ -114,10 +114,10 @@ cat("#' The second derivative of the cdf\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gumbel_p1_p2fa=function(x,t,v1,v2,v3){
+"gumbel_p1_p2fa=function(x,t0,v1,v2,v3){
 	nx=length(x)
 	vf=Vectorize(gumbel_p1_pdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
+	temp1=vf(x,t0,v1,v2,v3)
 	p2=deriv_copyfdd(temp1,nx,dim=3)
 	return(p2)
 }\n"
@@ -128,10 +128,10 @@ cat("#' Minus the first derivative of the cdf, at alpha\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gumbel_p1_mu1fa=function(alpha,t,v1,v2,v3){
-	x=qgumbel((1-alpha),mu=v1+v2*t,sigma=v3)
+"gumbel_p1_mu1fa=function(alpha,t0,v1,v2,v3){
+	x=qgumbel((1-alpha),mu=v1+v2*t0,sigma=v3)
 	vf=Vectorize(gumbel_p1_pd,\"x\")
-	mu1=-vf(x,t,v1,v2,v3)
+	mu1=-vf(x,t0,v1,v2,v3)
 	return(mu1)
 }\n"
 )
@@ -141,11 +141,11 @@ cat("#' Minus the second derivative of the cdf, at alpha\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gumbel_p1_mu2fa=function(alpha,t,v1,v2,v3){
-	x=qgumbel((1-alpha),mu=v1+v2*t,sigma=v3)
+"gumbel_p1_mu2fa=function(alpha,t0,v1,v2,v3){
+	x=qgumbel((1-alpha),mu=v1+v2*t0,sigma=v3)
 	nx=length(x)
 	vf=Vectorize(gumbel_p1_pdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3)
+	temp1=vf(x,t0,v1,v2,v3)
 	mu2=-deriv_copyfdd(temp1,nx,dim=3)
 	return(mu2)
 }\n"
@@ -158,7 +158,7 @@ cat("#' @inheritParams manf\n")
 cat(
 "gumbel_p1_ldda=function(x,t,v1,v2,v3){
 	nx=length(x)
-	vf=Vectorize(gumbel_p1_logfdd,\"x\")
+	vf=Vectorize(gumbel_p1_logfdd,c(\"x\",\"t\"))
 	temp1=vf(x,t,v1,v2,v3)
 	ldd=deriv_copyldd(temp1,nx,dim=3)
 	return(ldd)
@@ -172,7 +172,7 @@ cat("#' @inheritParams manf\n")
 cat(
 "gumbel_p1_lddda=function(x,t,v1,v2,v3){
 	nx=length(x)
-	vf=Vectorize(gumbel_p1_logfddd,\"x\")
+	vf=Vectorize(gumbel_p1_logfddd,c(\"x\",\"t\"))
 	temp1=vf(x,t,v1,v2,v3)
 	lddd=deriv_copylddd(temp1,nx,dim=3)
 	return(lddd)

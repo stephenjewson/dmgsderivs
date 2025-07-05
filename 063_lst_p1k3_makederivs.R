@@ -59,9 +59,9 @@ cat("#' The first derivative of the density\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lst_p1k3_f1fa=function(x,t,v1,v2,v3,kdf){
+"lst_p1k3_f1fa=function(x,t0,v1,v2,v3,kdf){
 	vf=Vectorize(lst_p1k3_fd,\"x\")
-	f1=vf(x,t,v1,v2,v3,kdf)
+	f1=vf(x,t0,v1,v2,v3,kdf)
 	return(f1)
 }\n"
 )
@@ -71,10 +71,10 @@ cat("#' The second derivative of the density\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"lst_p1k3_f2fa=function(x,t,v1,v2,v3,kdf){
+"lst_p1k3_f2fa=function(x,t0,v1,v2,v3,kdf){
 	nx=length(x)
 	vf=Vectorize(lst_p1k3_fdd,\"x\")
-	temp1=vf(x,t,v1,v2,v3,kdf)
+	temp1=vf(x,t0,v1,v2,v3,kdf)
 	f2=deriv_copyfdd(temp1,nx,dim=3)
 	return(f2)
 }\n"
@@ -84,9 +84,9 @@ cat("############################################################\n")
 ###cat("#' The first derivative of the cdf\n")
 ###cat("#' @inheritParams manf\n")
 ###cat(
-###"lst_p1k3_p1fa=function(x,t,v1,v2,v3,kdf){
+###"lst_p1k3_p1fa=function(x,t0,v1,v2,v3,kdf){
 ###	vf=Vectorize(lst_p1k3_pd,\"x\")
-###	p1=vf(x,t,v1,v2,v3,kdf)
+###	p1=vf(x,t0,v1,v2,v3,kdf)
 ###	return(p1)
 ###}\n"
 ###)
@@ -95,10 +95,10 @@ cat("############################################################\n")
 ###cat("#' The second derivative of the cdf\n")
 ###cat("#' @inheritParams manf\n")
 ###cat(
-###"lst_p1k3_p2fa=function(x,t,v1,v2,v3,kdf){
+###"lst_p1k3_p2fa=function(x,t0,v1,v2,v3,kdf){
 ###	nx=length(x)
 ###	vf=Vectorize(lst_p1k3_pdd,\"x\")
-###	temp1=vf(x,t,v1,v2,v3,kdf)
+###	temp1=vf(x,t0,v1,v2,v3,kdf)
 ###	p2=deriv_copyfdd(temp1,nx,dim=3)
 ###	return(p2)
 ###}\n"
@@ -111,7 +111,7 @@ cat("#' @inheritParams manf\n")
 cat(
 "lst_p1k3_ldda=function(x,t,v1,v2,v3,kdf){
 	nx=length(x)
-	vf=Vectorize(lst_p1k3_logfdd,\"x\")
+	vf=Vectorize(lst_p1k3_logfdd,c(\"x\",\"t\"))
 	temp1=vf(x,t,v1,v2,v3,kdf)
 	ldd=deriv_copyldd(temp1,nx,dim=3)
 	return(ldd)
@@ -125,7 +125,7 @@ cat("#' @inheritParams manf\n")
 cat(
 "lst_p1k3_lddda=function(x,t,v1,v2,v3,kdf){
 	nx=length(x)
-	vf=Vectorize(lst_p1k3_logfddd,\"x\")
+	vf=Vectorize(lst_p1k3_logfddd,c(\"x\",\"t\"))
 	temp1=vf(x,t,v1,v2,v3,kdf)
 	lddd=deriv_copylddd(temp1,nx,dim=3)
 	return(lddd)
