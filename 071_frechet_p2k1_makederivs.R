@@ -73,7 +73,7 @@ cat("frechet_p2k1_logfddd=")
 print.function(frechet_p2k1_logfddd)
 cat("############################################################\n")
 #
-cat("#' The first derivative of the density\n")
+cat("#' The first derivative of the density for DMGS\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
@@ -87,7 +87,21 @@ cat(
 )
 cat("############################################################\n")
 #
-cat("#' The second derivative of the density\n")
+cat("#' The first derivative of the density for WAIC\n")
+cat("#' @returns Vector\n")
+cat("#' @inheritParams manf\n")
+cat(
+"frechet_p2k1_f1fw=function(x,t,v1,v2,v3,kloc){
+# the v1 coming in here is sigma, and the v2 is lambda, following my cp code
+# I have to switch below
+	vf=Vectorize(frechet_p2k1_fd,c(\"x\",\"t\"))
+	f1=vf(x,t,kloc,v1,v2,v3)
+	return(f1)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The second derivative of the density for DMGS\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
@@ -97,6 +111,22 @@ cat(
 	nx=length(x)
 	vf=Vectorize(frechet_p2k1_fdd,\"x\")
 	temp1=vf(x,t0,kloc,v1,v2,v3)
+	f2=deriv_copyfdd(temp1,nx,dim=3)
+	return(f2)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The second derivative of the density for WAIC\n")
+cat("#' @returns Matrix\n")
+cat("#' @inheritParams manf\n")
+cat(
+"frechet_p2k1_f2fw=function(x,t,v1,v2,v3,kloc){
+# the v1 coming in here is sigma, and the v2 is lambda, following my cp code
+# I have to switch below
+	nx=length(x)
+	vf=Vectorize(frechet_p2k1_fdd,c(\"x\",\"t\"))
+	temp1=vf(x,t,kloc,v1,v2,v3)
 	f2=deriv_copyfdd(temp1,nx,dim=3)
 	return(f2)
 }\n"

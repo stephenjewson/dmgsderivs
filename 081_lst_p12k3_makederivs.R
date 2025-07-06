@@ -57,7 +57,7 @@ cat("lst_p12k3_logfddd=")
 print.function(lst_p12k3_logfddd)
 cat("############################################################\n")
 #
-cat("#' The first derivative of the density\n")
+cat("#' The first derivative of the density for DMGS\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
@@ -69,13 +69,38 @@ cat(
 )
 cat("############################################################\n")
 #
-cat("#' The second derivative of the density\n")
+cat("#' The first derivative of the density for WAIC\n")
+cat("#' @returns Vector\n")
+cat("#' @inheritParams manf\n")
+cat(
+"lst_p12k3_f1fw=function(x,t1,t2,v1,v2,v3,v4,v5,kdf){
+	vf=Vectorize(lst_p12k3_fd,c(\"x\",\"t1\",\"t2\"))
+	f1=vf(x,t1,t2,v1,v2,v3,v4,v5,kdf)
+	return(f1)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The second derivative of the density for DMGS\n")
 cat("#' @inheritParams manf\n")
 cat(
 "lst_p12k3_f2fa=function(x,t01,t02,v1,v2,v3,v4,v5,kdf){
 	nx=length(x)
 	vf=Vectorize(lst_p12k3_fdd,\"x\")
 	temp1=vf(x,t01,t02,v1,v2,v3,v4,v5,kdf)
+	f2=deriv_copyfdd(temp1,nx,dim=4)
+	return(f2)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The second derivative of the density for WAIC\n")
+cat("#' @inheritParams manf\n")
+cat(
+"lst_p12k3_f2fw=function(x,t1,t2,v1,v2,v3,v4,v5,kdf){
+	nx=length(x)
+	vf=Vectorize(lst_p12k3_fdd,c(\"x\",\"t1\",\"t2\"))
+	temp1=vf(x,t1,t2,v1,v2,v3,v4,v5,kdf)
 	f2=deriv_copyfdd(temp1,nx,dim=4)
 	return(f2)
 }\n"

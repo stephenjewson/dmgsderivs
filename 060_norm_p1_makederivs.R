@@ -71,7 +71,7 @@ cat("norm_p1_logfddd=")
 print.function(norm_p1_logfddd)
 cat("############################################################\n")
 #
-cat("#' The first derivative of the density\n")
+cat("#' The first derivative of the density for DMGS\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
@@ -83,7 +83,19 @@ cat(
 )
 cat("############################################################\n")
 #
-cat("#' The second derivative of the density\n")
+cat("#' The first derivative of the density for WAIC\n")
+cat("#' @returns Vector\n")
+cat("#' @inheritParams manf\n")
+cat(
+"norm_p1_f1fw=function(x,t,v1,v2,v3){
+	vf=Vectorize(norm_p1_fd,c(\"x\",\"t\"))
+	f1=vf(x,t,v1,v2,v3)
+	return(f1)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The second derivative of the density for DMGS\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
@@ -91,6 +103,20 @@ cat(
 	nx=length(x)
 	vf=Vectorize(norm_p1_fdd,\"x\")
 	temp1=vf(x,t0,v1,v2,v3)
+	f2=deriv_copyfdd(temp1,nx,dim=3)
+	return(f2)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The second derivative of the density for WAIC\n")
+cat("#' @returns Matrix\n")
+cat("#' @inheritParams manf\n")
+cat(
+"norm_p1_f2fw=function(x,t,v1,v2,v3){
+	nx=length(x)
+	vf=Vectorize(norm_p1_fdd,c(\"x\",\"t\"))
+	temp1=vf(x,t,v1,v2,v3)
 	f2=deriv_copyfdd(temp1,nx,dim=3)
 	return(f2)
 }\n"

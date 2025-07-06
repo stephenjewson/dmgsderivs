@@ -79,7 +79,7 @@ cat("pareto_p1k2_logfddd=")
 print.function(pareto_p1k2_logfddd)
 cat("############################################################\n")
 #
-cat("#' The first derivative of the density\n")
+cat("#' The first derivative of the density for DMGS\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
@@ -91,7 +91,19 @@ cat(
 )
 cat("############################################################\n")
 #
-cat("#' The second derivative of the density\n")
+cat("#' The first derivative of the density for WAIC\n")
+cat("#' @returns Vector\n")
+cat("#' @inheritParams manf\n")
+cat(
+"pareto_p1k2_f1fw=function(x,t,v1,v2,kscale){
+	vf=Vectorize(pareto_p1k2_fd,c(\"x\",\"t\"))
+	f1=vf(x,t,v1,v2,kscale)
+	return(f1)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The second derivative of the density for DMGS\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
@@ -99,6 +111,20 @@ cat(
 	nx=length(x)
 	vf=Vectorize(pareto_p1k2_fdd,\"x\")
 	temp1=vf(x,t0,v1,v2,kscale)
+	f2=deriv_copyfdd(temp1,nx,dim=2)
+	return(f2)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The second derivative of the density for WAIC\n")
+cat("#' @returns Matrix\n")
+cat("#' @inheritParams manf\n")
+cat(
+"pareto_p1k2_f2fw=function(x,t,v1,v2,kscale){
+	nx=length(x)
+	vf=Vectorize(pareto_p1k2_fdd,c(\"x\",\"t\"))
+	temp1=vf(x,t,v1,v2,kscale)
 	f2=deriv_copyfdd(temp1,nx,dim=2)
 	return(f2)
 }\n"

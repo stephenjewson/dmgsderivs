@@ -79,31 +79,63 @@ cat("gev_p123_logfddd=")
 print.function(gev_p123_logfddd)
 cat("############################################################\n")
 #
-cat("#' The first derivative of the density\n")
+cat("#' The first derivative of the density for DMGS\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p123_f1fa=function(x,t1,t2,t3,v1,v2,v3,v4,v5,v6){
+"gev_p123_f1fa=function(x,t01,t02,t03,v1,v2,v3,v4,v5,v6){
 
 	v3=movexiawayfromzero(v3)
 
 	vf=Vectorize(gev_p123_fd,\"x\")
+	f1=vf(x,t01,t02,t03,v1,v2,v3,v4,v5,v6)
+	return(f1)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The first derivative of the density for WAIC\n")
+cat("#' @returns Vector\n")
+cat("#' @inheritParams manf\n")
+cat(
+"gev_p123_f1fw=function(x,t1,t2,t3,v1,v2,v3,v4,v5,v6){
+
+	v3=movexiawayfromzero(v3)
+
+	vf=Vectorize(gev_p123_fd,c(\"x\",\"t1\",\"t2\",\"t3\"))
 	f1=vf(x,t1,t2,t3,v1,v2,v3,v4,v5,v6)
 	return(f1)
 }\n"
 )
 cat("############################################################\n")
 #
-cat("#' The second derivative of the density\n")
+cat("#' The second derivative of the density for DMGS\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p123_f2fa=function(x,t1,t2,t3,v1,v2,v3,v4,v5,v6){
+"gev_p123_f2fa=function(x,t01,t02,t03,v1,v2,v3,v4,v5,v6){
 	nx=length(x)
 
 	v3=movexiawayfromzero(v3)
 
 	vf=Vectorize(gev_p123_fdd,\"x\")
+	temp1=vf(x,t01,t02,t03,v1,v2,v3,v4,v5,v6)
+	f2=deriv_copyfdd(temp1,nx,dim=6)
+	return(f2)
+}\n"
+)
+cat("############################################################\n")
+#
+cat("#' The second derivative of the density for WAIC\n")
+cat("#' @returns Matrix\n")
+cat("#' @inheritParams manf\n")
+cat(
+"gev_p123_f2fw=function(x,t1,t2,t3,v1,v2,v3,v4,v5,v6){
+	nx=length(x)
+
+	v3=movexiawayfromzero(v3)
+
+	vf=Vectorize(gev_p123_fdd,c(\"x\",\"t1\",\"t2\",\"t3\"))
 	temp1=vf(x,t1,t2,t3,v1,v2,v3,v4,v5,v6)
 	f2=deriv_copyfdd(temp1,nx,dim=6)
 	return(f2)
