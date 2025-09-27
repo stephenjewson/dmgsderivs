@@ -21,8 +21,8 @@ compare=function(t,a,b){
 i=0
 
 ############## testing zone ###############
-#source("./150_gev_p1_makederivs.R")
-#stop()
+source("./150_gev_p1b_makederivs.R")
+stop()
 #source("./010_exp_makederivs.R")				;cat(" exp done\n\n")
 #stop()
 #source("./110_gev_makederivs.R")			;cat(" gev done\n\n")
