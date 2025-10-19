@@ -8,24 +8,24 @@ f=function(x,t,v1,v2,v3,v4){
 	(1/v3)*((1+v4*((x-v1-v2*t)/v3))^(-1/v4-1))*exp(-((1+v4*(x-v1-v2*t)/v3)^(-1/v4)))
 }
 compare("d",extraDistr::dgev(1,3+4*2,5,0.1),f(1,2,3,4,5,0.1))
-gev_p1a_fd=Deriv(f,c("v1","v2","v3","v4"),nderiv=1)
-gev_p1a_fdd=Deriv(f,c("v1","v2","v3","v4"),nderiv=2)
+gev_p1_fd=Deriv(f,c("v1","v2","v3","v4"),nderiv=1)
+gev_p1_fdd=Deriv(f,c("v1","v2","v3","v4"),nderiv=2)
 #
 p=function(x,t,v1,v2,v3,v4){
 	exp(-((1+v4*(x-v1-v2*t)/v3)^(-1/v4)))
 	}
 compare("p",extraDistr::pgev(1,3+4*2,5,0.1),p(1,2,3,4,5,0.1))
-gev_p1a_pd=Deriv(p,c("v1","v2","v3","v4"),nderiv=1)
-gev_p1a_pdd=Deriv(p,c("v1","v2","v3","v4"),nderiv=2)
+gev_p1_pd=Deriv(p,c("v1","v2","v3","v4"),nderiv=1)
+gev_p1_pdd=Deriv(p,c("v1","v2","v3","v4"),nderiv=2)
 #
 logf=function(x,t,v1,v2,v3,v4){
 	-log(v3)-(1+1/v4)*log(1+v4*(x-v1-v2*t)/v3)-(1+v4*(x-v1-v2*t)/v3)^(-1/v4)
 }
 compare("l",extraDistr::dgev(1,3+4*2,5,0.1,log=TRUE),logf(1,2,3,4,5,0.1))
-gev_p1a_logfdd=Deriv(logf,c("v1","v2","v3","v4"),nderiv=2)
-gev_p1a_logfddd=Deriv(logf,c("v1","v2","v3","v4"),nderiv=3)
+gev_p1_logfdd=Deriv(logf,c("v1","v2","v3","v4"),nderiv=2)
+gev_p1_logfddd=Deriv(logf,c("v1","v2","v3","v4"),nderiv=3)
 #
-sink("150c_gev_p1a_derivs.R")
+sink("150c_gev_p1_derivs.R")
 #
 cat("######################################################################\n")
 cat("#' First derivative of the density\n")
@@ -33,59 +33,59 @@ cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
-cat("gev_p1a_fd=")
-print.function(gev_p1a_fd)
+cat("gev_p1_fd=")
+print.function(gev_p1_fd)
 cat("######################################################################\n")
 cat("#' Second derivative of the density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("gev_p1a_fdd=")
-print.function(gev_p1a_fdd)
+cat("gev_p1_fdd=")
+print.function(gev_p1_fdd)
 cat("######################################################################\n")
 cat("#' First derivative of the cdf\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
-cat("gev_p1a_pd=")
-print.function(gev_p1a_pd)
+cat("gev_p1_pd=")
+print.function(gev_p1_pd)
 cat("######################################################################\n")
 cat("#' Second derivative of the cdf\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("gev_p1a_pdd=")
-print.function(gev_p1a_pdd)
+cat("gev_p1_pdd=")
+print.function(gev_p1_pdd)
 cat("############################################################\n")
 cat("#' Second derivative of the log density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
-cat("gev_p1a_logfdd=")
-print.function(gev_p1a_logfdd)
+cat("gev_p1_logfdd=")
+print.function(gev_p1_logfdd)
 cat("############################################################\n")
 cat("#' Third derivative of the log density\n")
 cat("#' Created by Stephen Jewson\n")
 cat("#' using Deriv() by Andrew Clausen and Serguei Sokol\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
-cat("gev_p1a_logfddd=")
-print.function(gev_p1a_logfddd)
+cat("gev_p1_logfddd=")
+print.function(gev_p1_logfddd)
 cat("############################################################\n")
 #
 cat("#' The first derivative of the density for DMGS\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p1a_f1fa=function(x,t0,v1,v2,v3,v4){
+"gev_p1_f1fa=function(x,t0,v1,v2,v3,v4){
 
 	v4=movexiawayfromzero(v4)
 
-	vf=Vectorize(gev_p1a_fd,\"x\")
+	vf=Vectorize(gev_p1_fd,\"x\")
 	f1=vf(x,t0,v1,v2,v3,v4)
 	return(f1)
 }\n"
@@ -96,11 +96,11 @@ cat("#' The first derivative of the density for WAIC\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p1a_f1fw=function(x,t,v1,v2,v3,v4){
+"gev_p1_f1fw=function(x,t,v1,v2,v3,v4){
 
 	v4=movexiawayfromzero(v4)
 
-	vf=Vectorize(gev_p1a_fd,c(\"x\",\"t\"))
+	vf=Vectorize(gev_p1_fd,c(\"x\",\"t\"))
 	f1=vf(x,t,v1,v2,v3,v4)
 	return(f1)
 }\n"
@@ -111,12 +111,12 @@ cat("#' The second derivative of the density for DMGS\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p1a_f2fa=function(x,t0,v1,v2,v3,v4){
+"gev_p1_f2fa=function(x,t0,v1,v2,v3,v4){
 	nx=length(x)
 
 	v4=movexiawayfromzero(v4)
 
-	vf=Vectorize(gev_p1a_fdd,\"x\")
+	vf=Vectorize(gev_p1_fdd,\"x\")
 	temp1=vf(x,t0,v1,v2,v3,v4)
 	f2=deriv_copyfdd(temp1,nx,dim=4)
 	return(f2)
@@ -128,12 +128,12 @@ cat("#' The second derivative of the density for WAIC\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p1a_f2fw=function(x,t,v1,v2,v3,v4){
+"gev_p1_f2fw=function(x,t,v1,v2,v3,v4){
 	nx=length(x)
 
 	v4=movexiawayfromzero(v4)
 
-	vf=Vectorize(gev_p1a_fdd,c(\"x\",\"t\"))
+	vf=Vectorize(gev_p1_fdd,c(\"x\",\"t\"))
 	temp1=vf(x,t,v1,v2,v3,v4)
 	f2=deriv_copyfdd(temp1,nx,dim=4)
 	return(f2)
@@ -144,11 +144,11 @@ cat(
 ###cat("#' The first derivative of the cdf\n")
 ###cat("#' @inheritParams manf\n")
 ###cat(
-###"gev_p1a_p1fa=function(x,t0,v1,v2,v3,v4){
+###"gev_p1_p1fa=function(x,t0,v1,v2,v3,v4){
 ###
 ###	v4=movexiawayfromzero(v4)
 ###
-###	vf=Vectorize(gev_p1a_pd,\"x\")
+###	vf=Vectorize(gev_p1_pd,\"x\")
 ###	p1=vf(x,t0,v1,v2,v3,v4)
 ###	return(p1)
 ###}\n"
@@ -158,12 +158,12 @@ cat(
 ###cat("#' The second derivative of the cdf\n")
 ###cat("#' @inheritParams manf\n")
 ###cat(
-###"gev_p1a_p2fa=function(x,t0,v1,v2,v3,v4){
+###"gev_p1_p2fa=function(x,t0,v1,v2,v3,v4){
 ###	nx=length(x)
 ###
 ###	v4=movexiawayfromzero(v4)
 ###
-###	vf=Vectorize(gev_p1a_pdd,\"x\")
+###	vf=Vectorize(gev_p1_pdd,\"x\")
 ###	temp1=vf(x,t0,v1,v2,v3,v4)
 ###	p2=deriv_copyfdd(temp1,nx,dim=4)
 ###	return(p2)
@@ -175,12 +175,12 @@ cat("#' Minus the first derivative of the cdf, at alpha\n")
 cat("#' @returns Vector\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p1a_mu1fa=function(alpha,t0,v1,v2,v3,v4){
+"gev_p1_mu1fa=function(alpha,t0,v1,v2,v3,v4){
 	x=qgev((1-alpha),mu=v1+v2*t0,sigma=v3,xi=v4)
 
 	v4=movexiawayfromzero(v4)
 
-	vf=Vectorize(gev_p1a_pd,\"x\")
+	vf=Vectorize(gev_p1_pd,\"x\")
 	mu1=-vf(x,t0,v1,v2,v3,v4)
 	return(mu1)
 }\n"
@@ -191,13 +191,13 @@ cat("#' Minus the second derivative of the cdf, at alpha\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p1a_mu2fa=function(alpha,t0,v1,v2,v3,v4){
+"gev_p1_mu2fa=function(alpha,t0,v1,v2,v3,v4){
 	x=qgev((1-alpha),mu=v1+v2*t0,sigma=v3,xi=v4)
 	nx=length(x)
 
 	v4=movexiawayfromzero(v4)
 
-	vf=Vectorize(gev_p1a_pdd,\"x\")
+	vf=Vectorize(gev_p1_pdd,\"x\")
 	temp1=vf(x,t0,v1,v2,v3,v4)
 	mu2=-deriv_copyfdd(temp1,nx,dim=4)
 	return(mu2)
@@ -209,12 +209,12 @@ cat("#' The second derivative of the normalized log-likelihood\n")
 cat("#' @returns Matrix\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p1a_ldda=function(x,t,v1,v2,v3,v4){
+"gev_p1_ldda=function(x,t,v1,v2,v3,v4){
 	nx=length(x)
 
 	v4=movexiawayfromzero(v4)
 
-	vf=Vectorize(gev_p1a_logfdd,c(\"x\",\"t\"))
+	vf=Vectorize(gev_p1_logfdd,c(\"x\",\"t\"))
 	temp1=vf(x,t,v1,v2,v3,v4)
 	ldd=deriv_copyldd(temp1,nx,dim=4)
 	return(ldd)
@@ -226,12 +226,12 @@ cat("#' The third derivative of the normalized log-likelihood\n")
 cat("#' @returns 3d array\n")
 cat("#' @inheritParams manf\n")
 cat(
-"gev_p1a_lddda=function(x,t,v1,v2,v3,v4){
+"gev_p1_lddda=function(x,t,v1,v2,v3,v4){
 	nx=length(x)
 
 	v4=movexiawayfromzero(v4)
 
-	vf=Vectorize(gev_p1a_logfddd,c(\"x\",\"t\"))
+	vf=Vectorize(gev_p1_logfddd,c(\"x\",\"t\"))
 	temp1=vf(x,t,v1,v2,v3,v4)
 	lddd=deriv_copylddd(temp1,nx,dim=4)
 	return(lddd)
